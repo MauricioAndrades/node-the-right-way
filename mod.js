@@ -2,14 +2,25 @@
 
 const fs = require('fs');
 var async = require('async');
-var spawn = require('child_process').spawn;
+var spawn = require('child_process')
+  .spawn;
 
 var filename = process.argv[2];
 
 if (!filename) {
-    throw Error('no filename');
+  throw Error('no filename');
 }
 
 fs.watch(filename, function() {
-let ls = spawn('ls', ['-lh', filename]); ls.stdout.pipe(process.stdout);
+  let ls = spawn('ls', ['-lh', filename]);
+  let output = '';
+
+  ls.stdout.on('data', function(chunk) {
+    output += chunk.toString();
+  })
+
+  ls.on('close', function() {
+    let parts = output.split(/\s+/);
+    console.dir([parts[0], parts[4], parts[8]]);
+  })
 });
