@@ -12,9 +12,15 @@ if (!filename) {
 }
 
 fs.watch(filename, function() {
+  /** @type {childprocess} [spawns a new childprocess] */
   let ls = spawn('ls', ['-lh', filename]);
+
+  /** output @type {buffer} [buffer for outputstream] */
   let output = '';
 
+  /**
+   *  Event listeners. Callback invoked on event dispatch. Since the Stream class inherits from EventEmitter, we can listen for events from the child process’s standard output stream.
+   */
   ls.stdout.on('data', function(chunk) {
     output += chunk.toString();
   })
